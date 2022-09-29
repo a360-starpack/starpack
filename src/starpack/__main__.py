@@ -1,6 +1,6 @@
 import typer
 from typing import Optional
-from resources import Resource
+from starpack.resources import Resource
 
 app = typer.Typer()
 
