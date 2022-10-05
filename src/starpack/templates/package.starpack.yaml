@@ -1,0 +1,19 @@
+package:
+  artifacts:
+    root-location: $directory
+    model-data:
+    validation-data:
+    training-data:
+    inference:
+      function-name: predict
+      script-name: predict.py
+    dependencies: requirements.txt
+  package-type:
+    registry: docker
+  version: 1.0.0
+deployment:
+  deployment-target:
+    type: docker
+    environment: dev
+  version: 1.0.0
+  model-endpoint: null

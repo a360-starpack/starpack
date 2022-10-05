@@ -44,6 +44,7 @@ setup(
         "typer[all]>=0.6.1,<1.0.0",
         "docker>=6.0.0,<7.0.0",
         "requests>=2.28.1,<3.0.0",
+        "pydantic[dotenv]>=1.10.2,<1.11.0"
     ],
     extras_require={
         "dev": ["pytest==7.1.2",
