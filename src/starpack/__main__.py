@@ -30,4 +30,5 @@ def initialize_starpack(directory: Optional[Path] = typer.Argument(None)):
         initialize.initialize_project_files(directory)
 
 
-app()
+if __name__ == "__main__":
+    app()
