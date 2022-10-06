@@ -30,7 +30,6 @@ class StarpackClient:
 
         # Go through all running containers in Docker and find any with the `app`: `starpack-engine`
         # label and grab its port
-        print("is this where you're freaking out?")
         engines = [
             container
             for container in self.docker_client.containers.list(all=True)
