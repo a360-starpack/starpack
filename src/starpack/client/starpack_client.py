@@ -53,7 +53,7 @@ class StarpackClient:
         print(f"Starting Starpack Engine at {self.url}")
         self.docker_client.containers.run(
             image=settings.engine_image,
-            name=f"starpack-engine-{round(time.time())}",
+            name=f"starpack-engine-{round(time())}",
             tty=True,
             ports={80: self.port},
             volumes={
