@@ -25,6 +25,9 @@ def main(
 
 @app.command(name="save")
 def save(directory: Path):
+    """
+    Uploads the contents of a local directory to the Starpack Engine
+    """
     client = StarpackClient(host="http://localhost", port=1976)
 
     client.save_artifacts(directory=directory)
@@ -48,6 +51,20 @@ def initialize_starpack(
         directory = directory.resolve()
         directory.mkdir(parents=True, exist_ok=True)
         initialize.initialize_project_files(directory)
+
+
+@app.command(name="terminate")
+def terminate_starpack(
+    all: bool = typer.Option(
+        False, "--all", "-A", help="Remove associated volumes and saved data as well."
+    )
+):
+    """
+    Terminates and removes the Starpack Engine container and optionally removes all associated data.
+    """
+    client = StarpackClient(host="http://localhost", port=1976)
+
+    client.terminate(all)
 
 
 if __name__ == "__main__":

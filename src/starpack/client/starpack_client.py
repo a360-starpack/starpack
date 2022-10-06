@@ -129,3 +129,15 @@ class StarpackClient:
         print(
             f"Successfully saved {directory} to {directory.name} on the Docker Volume {self.volume_name}"
         )
+
+    def terminate(self, all: bool = False):
+        self.engine.remove(force=True)
+
+        print("Removed Starpack Engine Container")
+
+        if all:
+            volume = self.docker_client.volumes.get(self.volume_name)
+
+            volume.remove(force=True)
+
+            print("Removed associated Starpack Engine data")
