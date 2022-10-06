@@ -78,3 +78,6 @@ class StarpackClient:
             raise AttributeError("Starpack Engine is unhealthy!")
 
         print(f"Successfully connected to server at {self.url}")
+
+    def save_model(self):
+        ...

@@ -7,6 +7,9 @@ from starpack._config import BASE_DIR
 
 
 def initialize_project_files(directory: Path):
+    """
+    Given a directory to initialize, copies over some starter files.
+    """
     template_dir = BASE_DIR / "templates"
 
     # Copy the simple files
