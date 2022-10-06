@@ -43,4 +43,4 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:          
-          args: --severity-threshold=high --file=setup.py --skip-unresolved
+          args: --severity-threshold=high --file=setup.cfg --skip-unresolved
