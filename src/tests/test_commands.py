@@ -18,9 +18,11 @@ class FakeContainer:
         }
     }
 
+    status = "running"
+
 
 class FakeContainerModule:
-    def list(*args):
+    def list(*args, **kwargs):
         return [FakeContainer]
 
     def run(*args, **kwargs):

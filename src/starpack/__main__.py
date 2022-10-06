@@ -25,7 +25,9 @@ def main(
 
 @app.command(name="save")
 def save(directory: Path):
-    ...
+    client = StarpackClient(host="http://localhost", port=1976)
+
+    client.save_artifacts(directory=directory)
 
 
 @app.command(name="init")
@@ -39,7 +41,7 @@ def initialize_starpack(
     requirements.txt, and an example starpack.yaml
     """
 
-    StarpackClient("http://localhost", 1976)
+    StarpackClient(host="http://localhost", port=1976)
 
     # Create the directory if given
     if directory:
