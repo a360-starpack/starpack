@@ -57,3 +57,9 @@ def test_command_list(tmp_path: Path, test_runner: CliRunner):
     result = test_runner.invoke(app, ["init", str(tmp_path)])
     assert result.exit_code == 0
     assert "Completed initializing project directory:" in result.stdout
+
+
+def test_command_version(test_runner: CliRunner):
+    result = test_runner.invoke(app, ["--version"])
+    assert result.exit_code == 0
+    assert "Starpack CLI version" in result.stdout

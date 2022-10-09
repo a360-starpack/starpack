@@ -99,6 +99,9 @@ class StarpackClient:
         )
 
     def check_health(self):
+        """
+        Tries to run a healthcheck to see if a server is up.
+        """
 
         try:
             health_response = requests.get(f"{self.url}/healthcheck")

@@ -4,8 +4,10 @@ from rich import print
 
 import typer
 
-from starpack import app, initialize, __version__
+from starpack import initialize, __version__
 from starpack.client import StarpackClient
+
+app = typer.Typer(pretty_exceptions_show_locals=False)
 
 
 def version_callback(give_version: bool) -> None:
