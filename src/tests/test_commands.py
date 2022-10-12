@@ -20,6 +20,9 @@ class FakeContainer:
 
     status = "running"
 
+    def remove(*args, **kwargs):
+        ...
+
 
 class FakeContainerModule:
     def list(*args, **kwargs):
@@ -34,10 +37,24 @@ class FakeImageModule:
         pass
 
 
+class FakeVolume:
+    def remove(*args, **kwargs):
+        ...
+
+
+class FakeVolumesModule:
+    def get(*args, **kwargs):
+        return FakeVolume()
+
+    def create(*args, **kwargs):
+        ...
+
+
 class FakeDockerClient:
     def __init__(self, *args, **kwargs) -> None:
         self.containers = FakeContainerModule
         self.images = FakeImageModule
+        self.volumes = FakeVolumesModule
 
 
 @pytest.fixture(autouse=True)
@@ -53,7 +70,7 @@ def test_runner(monkeypatch):
     return CliRunner()
 
 
-def test_command_list(tmp_path: Path, test_runner: CliRunner):
+def test_command_init(tmp_path: Path, test_runner: CliRunner):
     result = test_runner.invoke(app, ["init", str(tmp_path)])
     assert result.exit_code == 0
     assert "Completed initializing project directory:" in result.stdout
