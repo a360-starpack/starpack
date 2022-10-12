@@ -25,14 +25,14 @@ def main(
     return
 
 
-@app.command(name="save")
-def save(directory: Path):
+@app.command(name="upload")
+def upload(directory: Path):
     """
     Uploads the contents of a local directory to the Starpack Engine
     """
-    client = StarpackClient(host="http://localhost", port=1976)
+    client = StarpackClient()
 
-    client.save_artifacts(directory=directory)
+    client.upload_artifacts(directory=directory)
 
 
 @app.command(name="init")
@@ -46,7 +46,7 @@ def initialize_starpack(
     requirements.txt, and an example starpack.yaml
     """
 
-    StarpackClient(host="http://localhost", port=1976)
+    StarpackClient(start=True)
 
     # Create the directory if given
     if directory:
@@ -64,7 +64,8 @@ def terminate_starpack(
     """
     Terminates and removes the Starpack Engine container and optionally removes all associated data.
     """
-    client = StarpackClient(host="http://localhost", port=1976)
+
+    client = StarpackClient()
 
     client.terminate(all)
 
