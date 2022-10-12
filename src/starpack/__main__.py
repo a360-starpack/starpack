@@ -11,6 +11,7 @@ app = typer.Typer(pretty_exceptions_show_locals=False)
 
 
 def version_callback(give_version: bool) -> None:
+    """ """
     if give_version:
         print(f"Starpack CLI version: {__version__}")
         raise typer.Exit()
@@ -19,7 +20,12 @@ def version_callback(give_version: bool) -> None:
 @app.callback()
 def main(
     version: bool = typer.Option(
-        None, "--version", "-v", callback=version_callback, is_eager=True
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Returns current version of Starpack CLI",
     )
 ):
     return
