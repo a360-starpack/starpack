@@ -1,4 +1,9 @@
 package:
+  metadata:
+    name: test_package
+    version: 0.0.1
+    author: Andromeda 360, Inc.
+    author-email: irvin.shen@andromeda360.com
   artifacts:
     root-location: $directory
     model-data:
@@ -8,10 +13,30 @@ package:
       function-name: predict
       script-name: predict.py
     dependencies: requirements.txt
-  package-type:
-    registry: docker
-  version: 1.0.0
+  steps:
+    - type: wrapper
+      backend: fastapi # a backend is any given plugin name. Maybe I change it to plugin?
+      version: 1.0.0
+    - type: build
+      backend: docker # Allows for using something custom like podman, etc. ?
+    # - type: vulnerability-check
+    #   backend: snyk
+    #   credentials:
+    #   - name: SNYK_TOKEN
+    #     reference: cred_reference_point
+    # - type: validate-model
+    # - type: custom-test
+    #   backend: something_custom
+    - type: registry-push
+      backend: docker
+      image-name: # optional, defaults to metadata name
+      image-tags: # optional
+        - latest
+        - 0.0.1
+
 deployment:
+  metadata:
+    name: test_deployment
   deployment-target:
     type: docker
     environment: dev
