@@ -7,6 +7,7 @@ import docker
 import shutil
 
 from rich import print
+from rich.progress import track
 
 from starpack._config import settings, APP_DIR
 from starpack.errors import *
@@ -17,60 +18,27 @@ class StarpackClient:
     volume_name: str = "starpack-model-artifacts"
     app_label: str = "starpack-engine"
 
-    def __init__(self, host: str, port: Optional[int] = 1976) -> None:
+    def __init__(
+        self,
+        host: str = "http://localhost",
+        port: Optional[int] = 1976,
+        start: bool = False,
+    ) -> None:
 
+        # Generate the URL based on the provided host and port
         self.host = host
         self.port = port
         self._generate_url()
 
-        try:
-            self.docker_client = docker.from_env()
-        except docker.errors.DockerException:
-            raise DockerNotFoundError()
-
-        # Go through all running containers in Docker and find any with the `app`: `starpack-engine`
-        # label and grab its port
-        engines = [
-            container
-            for container in self.docker_client.containers.list(all=True)
-            if ("app", self.app_label) in container.labels.items()
-        ]
-
-        if not engines:
+        if start:
+            self._init_docker_client()
             self.start_server()
-        else:
-            # Just keep a single engine and kill all of the others.
-            self.engine = engines.pop()
-            # self.engine.restart()
-            for engine in engines:
-                engine.remove(force=True)
-
-        if self.engine.status != "running":
-            print("Waiting for engine to come online...")
-            self.engine.start()
-            sleep(3)
-        # Sleep for a bit to allow the server to come up
-        # sleep(3)
-
-        self.port = self.engine.attrs["HostConfig"]["PortBindings"]["80/tcp"][0][
-            "HostPort"
-        ]
-        self._generate_url()
-        print(f"Found the server running at {self.url}")
-
-        # Ensures that the client is actually up and running.
-        self.check_health()
-
-    def _generate_url(self):
-        """
-        Allows for edge cases if we just have the engine registered with a FQDN
-        """
-        if self.port:
-            self.url = f"{self.host}:{self.port}"
-        else:
-            self.url = self.host
 
     def start_server(self):
+        """
+        Starts the Starpack Engine locally after removing all other instances.
+        """
+        self.remove_engines()
 
         # Ensure that we have the Docker Volume to hold saved artifacts and
         # the latest version of our Starpack Engine image from Docker Hub
@@ -98,7 +66,22 @@ class StarpackClient:
             labels={"app": self.app_label},
         )
 
-    def check_health(self):
+        # Check the engine status a few times
+        max_attempts = 5
+        success = False
+        for _ in track(
+            range(max_attempts), description="Waiting for the engine to come up..."
+        ):
+            if not success:
+                success = self.check_health()
+                sleep(1)
+
+        if not success:
+            raise EngineInitializationError()
+
+        self._generate_url()
+
+    def check_health(self) -> bool:
         """
         Tries to run a healthcheck to see if a server is up.
         """
@@ -106,14 +89,18 @@ class StarpackClient:
         try:
             health_response = requests.get(f"{self.url}/healthcheck")
         except requests.ConnectionError:
-            raise ValueError("Unable to get response from Starpack Engine.")
+            return False
 
         if health_response.status_code != 200:
-            raise AttributeError("Starpack Engine is unhealthy!")
+            return False
 
         print(f"Successfully connected to server at {self.url}")
+        return True
 
-    def save_artifacts(self, directory: Path) -> None:
+    def upload_artifacts(self, directory: Path) -> None:
+        """
+        Given a directory, uploads the contents to our artifacts docker volume.
+        """
 
         directory = directory.resolve()
 
@@ -133,10 +120,13 @@ class StarpackClient:
             f"Successfully saved {directory} to {directory.name} on the Docker Volume {self.volume_name}"
         )
 
-    def terminate(self, all: bool = False):
-        self.engine.remove(force=True)
-
-        print("Removed Starpack Engine Container")
+    def terminate(self, all: bool = False) -> None:
+        """
+        Terminates a local Docker instance of Starpack Engine and optionally deletes the associated volumes.
+        """
+        self._init_docker_client()
+        self.remove_engines()
+        print("Removed all instances of the Starpack Engine")
 
         if all:
             volume = self.docker_client.volumes.get(self.volume_name)
@@ -144,3 +134,34 @@ class StarpackClient:
             volume.remove(force=True)
 
             print("Removed associated Starpack Engine data")
+
+    def remove_engines(self) -> None:
+        """
+        Finds all instances of starpack engine applications and removes them.
+        """
+        engines = [
+            container
+            for container in self.docker_client.containers.list(all=True)
+            if ("app", self.app_label) in container.labels.items()
+        ]
+        if engines:
+            for engine in engines:
+                engine.remove(force=True)
+
+    def _init_docker_client(self) -> None:
+        """
+        Initializes a Docker Client
+        """
+        try:
+            self.docker_client = docker.from_env()
+        except docker.errors.DockerException:
+            raise DockerNotFoundError()
+
+    def _generate_url(self):
+        """
+        Allows for edge cases if we just have the engine registered with a FQDN
+        """
+        if self.port is not None:
+            self.url = f"{self.host}:{self.port}"
+        else:
+            self.url = self.host
