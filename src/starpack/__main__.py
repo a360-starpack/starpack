@@ -4,7 +4,7 @@ from rich import print
 
 import typer
 
-from starpack import initialize, __version__
+from starpack import initialize, __version__, upload, init, terminate
 from starpack.client import StarpackClient
 
 app = typer.Typer(pretty_exceptions_show_locals=False)
@@ -26,19 +26,24 @@ def main(
 
 
 @app.command(name="upload")
-def upload(directory: Path):
+def cmd_upload(directory: Path):
     """
-    Uploads the contents of a local directory to the Starpack Engine
-    """
-    client = StarpackClient()
+    Command to upload the contents of a local directory to the Starpack Engine
 
-    client.upload_artifacts(directory=directory)
+    `directory` should be a path that exists on your local host machine.
+    """
+    upload(directory=directory)
 
 
 @app.command(name="init")
-def initialize_starpack(
+def cmd_init(
     directory: Optional[Path] = typer.Argument(None),
-    local: bool = typer.Option(True, "--local", "-l"),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-F",
+        help="Force a removal of all older starpack-engine containers",
+    ),
 ):
     """
     Starts the starpack-engine container locally and furthermore initializes
@@ -46,18 +51,12 @@ def initialize_starpack(
     requirements.txt, and an example starpack.yaml
     """
 
-    StarpackClient(start=True)
-
-    # Create the directory if given
-    if directory:
-        directory = directory.resolve()
-        directory.mkdir(parents=True, exist_ok=True)
-        initialize.initialize_project_files(directory)
+    init(directory=directory, force=force)
 
 
 @app.command(name="terminate")
-def terminate_starpack(
-    all: bool = typer.Option(
+def cmd_terminate(
+    all_resources: bool = typer.Option(
         False, "--all", "-A", help="Remove associated volumes and saved data as well."
     )
 ):
@@ -65,9 +64,7 @@ def terminate_starpack(
     Terminates and removes the Starpack Engine container and optionally removes all associated data.
     """
 
-    client = StarpackClient()
-
-    client.terminate(all)
+    terminate(all_resources=all_resources)
 
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import sleep, time
-from typing import Optional
+from typing import List, Optional
 import requests
 import docker
+from docker.models.containers import Container
 import shutil
 
 from rich import print
@@ -23,6 +24,8 @@ class StarpackClient:
         host: str = "http://localhost",
         port: Optional[int] = 1976,
         start: bool = False,
+        docker: bool = False,
+        force: bool = False,
     ) -> None:
 
         # Generate the URL based on the provided host and port
@@ -30,15 +33,35 @@ class StarpackClient:
         self.port = port
         self._generate_url()
 
-        if start:
+        if docker:
             self._init_docker_client()
-            self.start_server()
 
-    def start_server(self):
+        if start:
+            self.start_server(force=force)
+
+    def start_server(self, force: bool = False):
         """
         Starts the Starpack Engine locally after removing all other instances.
         """
-        self.remove_engines()
+        if force:
+            self.remove_engines()
+        else:
+            engines = self._find_engines()
+            if len(engines) == 1:
+                # Grab the singular engine if we're not forcing a new start
+                self.engine = engines[0]
+                if self.engine.status != "running":
+                    self.engine.start()
+                self.port = self.engine.attrs["HostConfig"]["PortBindings"]["80/tcp"][
+                    0
+                ]["HostPort"]
+                self._engine_startup_check()
+                self._generate_url()
+                print(f"Connected to existing engine running at {self.url}")
+                return
+            elif engines:
+                # Case with many engines: Just clean it all out and start again
+                self.remove_engines()
 
         # Ensure that we have the Docker Volume to hold saved artifacts and
         # the latest version of our Starpack Engine image from Docker Hub
@@ -66,18 +89,7 @@ class StarpackClient:
             labels={"app": self.app_label},
         )
 
-        # Check the engine status a few times
-        max_attempts = 5
-        success = False
-        for _ in track(
-            range(max_attempts), description="Waiting for the engine to come up..."
-        ):
-            if not success:
-                success = self.check_health()
-                sleep(1)
-
-        if not success:
-            raise EngineInitializationError()
+        self._engine_startup_check()
 
         self._generate_url()
 
@@ -139,14 +151,18 @@ class StarpackClient:
         """
         Finds all instances of starpack engine applications and removes them.
         """
+        engines = self._find_engines()
+        if engines:
+            for engine in engines:
+                engine.remove(force=True)
+
+    def _find_engines(self) -> List[Container]:
         engines = [
             container
             for container in self.docker_client.containers.list(all=True)
             if ("app", self.app_label) in container.labels.items()
         ]
-        if engines:
-            for engine in engines:
-                engine.remove(force=True)
+        return engines
 
     def _init_docker_client(self) -> None:
         """
@@ -156,6 +172,20 @@ class StarpackClient:
             self.docker_client = docker.from_env()
         except docker.errors.DockerException:
             raise DockerNotFoundError()
+
+    def _engine_startup_check(self) -> None:
+        # Check the engine status a few times
+        max_attempts = 5
+        success = False
+        for _ in track(
+            range(max_attempts), description="Waiting for the engine to come up..."
+        ):
+            if not success:
+                success = self.check_health()
+                sleep(1)
+
+        if not success:
+            raise EngineInitializationError()
 
     def _generate_url(self):
         """
