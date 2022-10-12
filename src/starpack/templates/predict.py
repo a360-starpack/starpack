@@ -24,7 +24,7 @@ def predict(model_paths: List[Path], patient_metrics: pd.DataFrame) -> pd.DataFr
 # For testing, you can make sure this function properly runs
 if __name__ == "__main__":
     input_path = Path(input("Please give the path to the input file: "))
-    model_path = Path(input("Please give the path to your model file: "))
+    model_paths = [Path(input("Please give the path to your model file: "))]
 
     input_type = input_path.suffix
 
@@ -33,6 +33,6 @@ if __name__ == "__main__":
     elif input_type == ".csv":
         input = pd.read_csv(input_path)
 
-    output = predict(input)
+    output = predict(model_paths, input)
 
     print(output)
