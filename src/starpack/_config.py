@@ -1,6 +1,7 @@
 from pathlib import Path
 import typer
-from pydantic import BaseSettings
+from pydantic import BaseSettings, root_validator
+from typing import Optional
 
 # Configuration for the app name
 APP_NAME = "starpack"
@@ -16,6 +17,17 @@ ENV_FILE.touch()
 class Settings(BaseSettings):
     engine_port: int = 1976
     engine_image: str = "starpack/starpack-engine:latest"
+    app_name: str = APP_NAME
+    app_dir: Path = APP_DIR
+    plugins_dir: Optional[Path] = None
+
+    @root_validator
+    def ensure_plugins_dir(cls, values):
+        if not values["plugins_dir"]:
+            values["plugins_dir"] = values["app_dir"] / "plugins"
+        values["plugins_dir"].mkdir(exist_ok=True, parents=True)
+
+        return values
 
     class Config:
         env_file = str(ENV_FILE)

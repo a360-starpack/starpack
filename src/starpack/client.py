@@ -1,7 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import sleep, time
-from typing import List, Optional
+from typing import Dict, List, Optional
 import requests
 import docker
 from docker.models.containers import Container
@@ -16,7 +16,16 @@ from starpack.errors import *
 
 class StarpackClient:
 
-    volume_name: str = "starpack-model-artifacts"
+    volumes: Dict[str, Dict[str, str]] = {
+        "artifacts": {
+            "host": "starpack-model-artifacts",
+            "container": "/app/external/artifacts",
+        },
+        "plugins": {
+            "host": f"{APP_DIR}/plugins",
+            "container": "/app/external/plugins",
+        },
+    }
     app_label: str = "starpack-engine"
 
     def __init__(
@@ -66,7 +75,7 @@ class StarpackClient:
         # Ensure that we have the Docker Volume to hold saved artifacts and
         # the latest version of our Starpack Engine image from Docker Hub
         self.docker_client.volumes.create(
-            name=self.volume_name, labels={"app": self.app_label}
+            name=self.volumes["artifacts"]["host"], labels={"app": self.app_label}
         )
         self.docker_client.images.pull(settings.engine_image)
 
@@ -82,7 +91,14 @@ class StarpackClient:
                     "bind": "/var/run/docker.sock",
                     "mode": "rw",
                 },
-                self.volume_name: {"bind": "/artifacts", "mode": "rw"},
+                self.volumes["artifacts"]["host"]: {
+                    "bind": self.volumes["artifacts"]["container"],
+                    "mode": "rw",
+                },
+                self.volumes["plugins"]["host"]: {
+                    "bind": self.volumes["plugins"]["container"],
+                    "mode": "rw",
+                },
             },
             stdin_open=True,
             detach=True,
