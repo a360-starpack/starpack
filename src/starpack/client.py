@@ -40,7 +40,6 @@ class StarpackClient:
         # Generate the URL based on the provided host and port
         self.host = host
         self.port = port
-        self._generate_url()
 
         if docker:
             self._init_docker_client()
@@ -65,7 +64,6 @@ class StarpackClient:
                     0
                 ]["HostPort"]
                 self._engine_startup_check()
-                self._generate_url()
                 print(f"Connected to existing engine running at {self.url}")
                 return
             elif engines:
@@ -107,7 +105,6 @@ class StarpackClient:
 
         self._engine_startup_check()
 
-        self._generate_url()
 
     def check_health(self) -> bool:
         """
@@ -142,10 +139,10 @@ class StarpackClient:
             )
 
             with open(dir_archive, "rb") as tar_data:
-                self.engine.put_archive("/artifacts", tar_data)
+                self.engine.put_archive(self.volumes["artifacts"]["container"], tar_data)
 
         print(
-            f"Successfully saved {directory} to {directory.name} on the Docker Volume {self.volume_name}"
+            f"Successfully saved {directory} to {directory.name} on the Docker Volume {self.volumes['artifacts']['host']}"
         )
 
     def terminate(self, all: bool = False) -> None:
@@ -202,12 +199,13 @@ class StarpackClient:
 
         if not success:
             raise EngineInitializationError()
-
-    def _generate_url(self):
+    
+    @property
+    def url(self):
         """
         Allows for edge cases if we just have the engine registered with a FQDN
         """
         if self.port is not None:
-            self.url = f"{self.host}:{self.port}"
+            return f"{self.host}:{self.port}"
         else:
-            self.url = self.host
+            return self.host
