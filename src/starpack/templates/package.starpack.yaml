@@ -14,8 +14,7 @@ package:
       script_name: predict.py
     dependencies: requirements.txt
   steps:
-    - type: wrapper
-      backend: fastapi # a backend is any given plugin name. Maybe I change it to plugin?
+    - name: fastapi
       version: 1.0.0
     # - type: vulnerability-check
     #   backend: snyk
@@ -25,8 +24,7 @@ package:
     # - type: validate-model
     # - type: custom-test
     #   backend: something_custom
-    - type: registry-push
-      backend: docker
+    - name: docker_desktop_push
       image_name: # optional, defaults to metadata name
       image_tags: # optional
         - latest

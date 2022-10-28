@@ -64,12 +64,18 @@ class StarpackClient:
         return True
 
     def package(self, payload: Dict[str, Any]) -> None:
+        """
+        Packages model artifacts, given a starpack YAML/JSON payload
+        """
         package_url = f"{self.url}/package"
 
-        output = requests.post(package_url, json=package_url)
+        output = requests.post(package_url, json=payload)
 
         if output.status_code / 100 == 2:
-            print(f"Successfully packaged {payload['name']}")
+            print(f"Successfully packaged {payload['package']['metadata']['name']}")
+        else:
+            print(output.status_code)
+            print(output.text)
 
     def remove_engines(self) -> None:
         """
@@ -93,7 +99,7 @@ class StarpackClient:
                 self.engine = engines[0]
                 if self.engine.status != "running":
                     self.engine.start()
-                self.port = self.engine.attrs["HostConfig"]["PortBindings"]["80/tcp"][
+                self.port = self.engine.attrs["HostConfig"]["PortBindings"]["1976/tcp"][
                     0
                 ]["HostPort"]
                 self._engine_startup_check()
@@ -115,7 +121,7 @@ class StarpackClient:
             image=settings.engine_image,
             name=f"starpack-engine-{round(time())}",
             tty=True,
-            ports={80: self.port},
+            ports={1976: self.port},
             volumes={
                 # Docker-in-Docker mounting
                 "/var/run/docker.sock": {

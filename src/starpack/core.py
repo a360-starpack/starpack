@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Optional
+from yaml import load, Loader
 
 
 from starpack import initialize, __version__
@@ -53,16 +54,35 @@ def terminate(all_resources: bool = False, client: Optional[StarpackClient] = No
     client.terminate(all_resources)
 
 
-def package(yaml_path: Path):
+def package(yaml_path: Path, client: Optional[StarpackClient] = None) -> None:
     """
     Takes a YAML file or directory to start the packaging process into a Docker image
     """
     if not yaml_path.exists():
         raise PathExistsError(yaml_path)
-    ...
+    
+    if not client:
+        client = StarpackClient(start=True, docker=True)
+
+    with open(yaml_path) as file:
+       input_dict = load(file, Loader=Loader)
+    
+    client.package(input_dict)
 
 
-def package_directory(directory: Path):
+def package_directory(directory: Path, client: Optional[StarpackClient] = None) -> None:
     if not directory.is_dir():
         return package(directory)
-    ...
+
+    yaml_file = directory /  "starpack.yaml"
+
+    if not yaml_file.exists():
+        raise PathExistsError(yaml_file)
+    
+    if not client:
+        client = StarpackClient(start=True, docker=True)
+    
+    upload(directory, client=client)
+    package(yaml_file, client=client)
+
+    
