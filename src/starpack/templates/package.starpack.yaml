@@ -3,22 +3,19 @@ package:
     name: test_package
     version: 0.0.1
     author: Andromeda 360, Inc.
-    author-email: irvin.shen@andromeda360.com
+    author_email: irvin.shen@andromeda360.com
   artifacts:
-    root-location: $directory
-    model-data:
-    validation-data:
-    training-data:
+    root_location: $directory
+    validation_data:
+    training_data:
     inference:
-      function-name: predict
-      script-name: predict.py
+      model_data: # List out any models you want imported
+      function_name: predict
+      script_name: predict.py
     dependencies: requirements.txt
   steps:
-    - type: wrapper
-      backend: fastapi # a backend is any given plugin name. Maybe I change it to plugin?
+    - name: fastapi
       version: 1.0.0
-    - type: build
-      backend: docker # Allows for using something custom like podman, etc. ?
     # - type: vulnerability-check
     #   backend: snyk
     #   credentials:
@@ -27,18 +24,17 @@ package:
     # - type: validate-model
     # - type: custom-test
     #   backend: something_custom
-    - type: registry-push
-      backend: docker
-      image-name: # optional, defaults to metadata name
-      image-tags: # optional
+    - name: docker_desktop_push
+      image_name: # optional, defaults to metadata name
+      image_tags: # optional
         - latest
         - 0.0.1
 
 deployment:
   metadata:
     name: test_deployment
-  deployment-target:
+  deployment_target:
     type: docker
     environment: dev
   version: 1.0.0
-  model-endpoint: null
+  model_endpoint: null

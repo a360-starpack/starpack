@@ -17,7 +17,7 @@ def initialize_project_files(directory: Path):
     copy_file(template_dir / "predict.py", directory)
 
     # Add the full directory path as a parameter for ease of use
-    starpack_yaml_mapping = {"directory": str(directory)}
+    starpack_yaml_mapping = {"directory": directory.name}
     render_file(
         template_dir / "package.starpack.yaml", directory, starpack_yaml_mapping
     )

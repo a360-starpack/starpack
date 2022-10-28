@@ -5,26 +5,21 @@ from typing import List
 from pathlib import Path
 
 
-def predict(model_paths: List[Path], patient_metrics: pd.DataFrame) -> pd.DataFrame:
-
-    # Load Pretrained Model
-    model_filepath = model_paths[0]
-    with open(model_filepath, "rb") as pretrained_model_file:
-        pretrained_model = pickle.load(pretrained_model_file)
+def predict(model, patient_metrics: pd.DataFrame) -> pd.DataFrame:
 
     # Apply predictions to scoring file
     # Optional, but we will give back the input, with the predictions appended to the 'tgt_heart_disease' column.
     dfOut = patient_metrics
-    dfOut["tgt_heart_disease"] = pretrained_model.predict(patient_metrics)
+    dfOut["tgt_heart_disease"] = model.predict(patient_metrics)
 
     # Read out the prediction
     return dfOut
 
 
-# For testing, you can make sure this function properly runs
+# For testing, you can make sure this script properly runs (`python predict.py`)
 if __name__ == "__main__":
     input_path = Path(input("Please give the path to the input file: "))
-    model_paths = [Path(input("Please give the path to your model file: "))]
+    model_path = Path(input("Please give the path to your model file: "))
 
     input_type = input_path.suffix
 
@@ -33,6 +28,12 @@ if __name__ == "__main__":
     elif input_type == ".csv":
         input = pd.read_csv(input_path)
 
-    output = predict(model_paths, input)
+
+    # Load Pretrained Model
+    with open(model_path, "rb") as pretrained_model_file:
+        pretrained_model = pickle.load(pretrained_model_file)
+
+
+    output = predict(pretrained_model, input)
 
     print(output)
