@@ -1,7 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import sleep, time
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import requests
 import docker
 from docker.models.containers import Container
@@ -46,6 +46,39 @@ class StarpackClient:
 
         if start:
             self.start_server(force=force)
+
+    def check_health(self) -> bool:
+        """
+        Tries to run a healthcheck to see if a server is up.
+        """
+
+        try:
+            health_response = requests.get(f"{self.url}/healthcheck")
+        except requests.ConnectionError:
+            return False
+
+        if health_response.status_code != 200:
+            return False
+
+        print(f"Successfully connected to server at {self.url}")
+        return True
+
+    def package(self, payload: Dict[str, Any]) -> None:
+        package_url = f"{self.url}/package"
+
+        output = requests.post(package_url, json=package_url)
+
+        if output.status_code / 100 == 2:
+            print(f"Successfully packaged {payload['name']}")
+
+    def remove_engines(self) -> None:
+        """
+        Finds all instances of starpack engine applications and removes them.
+        """
+        engines = self._find_engines()
+        if engines:
+            for engine in engines:
+                engine.remove(force=True)
 
     def start_server(self, force: bool = False):
         """
@@ -105,22 +138,20 @@ class StarpackClient:
 
         self._engine_startup_check()
 
-
-    def check_health(self) -> bool:
+    def terminate(self, all: bool = False) -> None:
         """
-        Tries to run a healthcheck to see if a server is up.
+        Terminates a local Docker instance of Starpack Engine and optionally deletes the associated volumes.
         """
+        self._init_docker_client()
+        self.remove_engines()
+        print("Removed all instances of the Starpack Engine")
 
-        try:
-            health_response = requests.get(f"{self.url}/healthcheck")
-        except requests.ConnectionError:
-            return False
+        if all:
+            volume = self.docker_client.volumes.get(self.volume_name)
 
-        if health_response.status_code != 200:
-            return False
+            volume.remove(force=True)
 
-        print(f"Successfully connected to server at {self.url}")
-        return True
+            print("Removed associated Starpack Engine data")
 
     def upload_artifacts(self, directory: Path) -> None:
         """
@@ -139,35 +170,13 @@ class StarpackClient:
             )
 
             with open(dir_archive, "rb") as tar_data:
-                self.engine.put_archive(self.volumes["artifacts"]["container"], tar_data)
+                self.engine.put_archive(
+                    self.volumes["artifacts"]["container"], tar_data
+                )
 
         print(
             f"Successfully saved {directory} to {directory.name} on the Docker Volume {self.volumes['artifacts']['host']}"
         )
-
-    def terminate(self, all: bool = False) -> None:
-        """
-        Terminates a local Docker instance of Starpack Engine and optionally deletes the associated volumes.
-        """
-        self._init_docker_client()
-        self.remove_engines()
-        print("Removed all instances of the Starpack Engine")
-
-        if all:
-            volume = self.docker_client.volumes.get(self.volume_name)
-
-            volume.remove(force=True)
-
-            print("Removed associated Starpack Engine data")
-
-    def remove_engines(self) -> None:
-        """
-        Finds all instances of starpack engine applications and removes them.
-        """
-        engines = self._find_engines()
-        if engines:
-            for engine in engines:
-                engine.remove(force=True)
 
     def _find_engines(self) -> List[Container]:
         engines = [
@@ -199,7 +208,7 @@ class StarpackClient:
 
         if not success:
             raise EngineInitializationError()
-    
+
     @property
     def url(self):
         """
