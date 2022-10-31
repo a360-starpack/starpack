@@ -19,11 +19,11 @@ class StarpackClient:
     volumes: Dict[str, Dict[str, str]] = {
         "artifacts": {
             "host": "starpack-model-artifacts",
-            "container": "/app/external/artifacts",
+            "container": "/app/engine/external/artifacts",
         },
         "plugins": {
             "host": f"{APP_DIR}/plugins",
-            "container": "/app/external/plugins",
+            "container": "/app/engine/external/plugins",
         },
     }
     app_label: str = "starpack-engine"
