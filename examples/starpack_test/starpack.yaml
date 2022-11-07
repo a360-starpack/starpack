@@ -1,0 +1,40 @@
+package:
+  metadata:
+    name: final_test
+    description: "Testing package"
+    version: 0.0.1
+    author: Andromeda 360, Inc.
+    author_email: irvin.shen@andromeda360.com
+  artifacts:
+    root_location: starpack_test
+    validation_data:
+    training_data:
+    inference:
+      function_name: predict
+      script_name: predict.py
+      model_data: pred_heart_disease.pkl
+    dependencies: requirements.txt
+  steps:
+    - name: fastapi # a backend is any given plugin name. Maybe I change it to plugin?
+      version: 1.0.0
+    # - type: vulnerability-check
+    #   backend: snyk
+    #   credentials:
+    #   - name: SNYK_TOKEN
+    #     reference: cred_reference_point
+    # - type: validate-model
+    # - type: custom-test
+    #   backend: something_custom
+    - name: docker_desktop_push
+      image_name: "irvin-killed-it" # optional, defaults to metadata name
+      image_tags: # optional
+        - latest
+
+deployment:
+  metadata:
+    name: test_deployment
+  deployment_target:
+    type: docker
+    environment: dev
+  version: 1.0.0
+  model_endpoint: null
