@@ -4,14 +4,15 @@ from rich import print
 
 import typer
 
-from starpack import initialize, __version__, upload, init, terminate, package_directory
-from starpack.client import StarpackClient
+from starpack import __version__, upload, init, terminate, package_directory
 
 app = typer.Typer(pretty_exceptions_show_locals=False)
 
 
 def version_callback(give_version: bool) -> None:
-    """ """
+    """
+    Returns the current version of Starpack
+    """
     if give_version:
         print(f"Starpack CLI version: {__version__}")
         raise typer.Exit()
@@ -72,9 +73,21 @@ def cmd_terminate(
 
     terminate(all_resources=all_resources)
 
+
 @app.command(name="package")
 def cmd_package(package_path: Path) -> None:
+    """
+    Given a directory, uploads the contents and passes through the contained `starpack.yaml`; given a file, passes as a payload as the `yaml` file.
+    """
     package_directory(package_path)
+
+
+@app.command(name="deploy")
+def cmd_deploy(package_path: Path) -> None:
+    """
+    Given a starpack.yaml, deploys a Starpack Package into the environment designated within.
+    """
+    ...
 
 
 if __name__ == "__main__":
