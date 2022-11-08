@@ -4,7 +4,7 @@ from rich import print
 
 import typer
 
-from starpack import __version__, upload, init, terminate, package_directory
+from starpack import __version__, upload, init, terminate, package_directory, deploy_directory
 
 app = typer.Typer(pretty_exceptions_show_locals=False)
 
@@ -87,7 +87,7 @@ def cmd_deploy(package_path: Path) -> None:
     """
     Given a starpack.yaml, deploys a Starpack Package into the environment designated within.
     """
-    ...
+    deploy_directory(package_path)
 
 
 if __name__ == "__main__":
