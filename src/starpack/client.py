@@ -63,6 +63,20 @@ class StarpackClient:
         print(f"Successfully connected to server at {self.url}")
         return True
 
+    def deploy(self, payload: Dict[str, Any]) -> None:
+        """
+        Deploys a packaged model image or if the image does not exist, attempts to run the packaging in the YAML file
+        """
+        deploy_url = f"{self.url}/deploy"
+
+        output = requests.post(deploy_url, json=payload)
+
+        if output.status_code / 100 == 2:
+            print(f"Successfully deployed {payload['deployment']['metadata']['name']}")
+        else:
+            print(output.status_code)
+            print(output.text)
+
     def package(self, payload: Dict[str, Any]) -> None:
         """
         Packages model artifacts, given a starpack YAML/JSON payload

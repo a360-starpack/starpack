@@ -1,0 +1,8 @@
+# Sample requirements for your deployed ML model
+
+pandas
+numpy
+
+# Any of the data in this file can be deleted or changed and you can add your own requirements, optionally with version constraints, as shown below:
+
+scikit-learn >1.0.0, <2.0.0
