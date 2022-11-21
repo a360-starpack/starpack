@@ -25,6 +25,13 @@ It is currently on our roadmap to support deployment through Andromeda 360 down 
   * [Quickstart](#quickstart)
   * [Full Command List](#full-command-list)
     * [Init](#init)
+    * [Terminate](#terminate)
+    * [Upload](#upload)
+    * [Package](#package)
+      * [Metadata](#metadata)
+      * [Artifacts](#artifacts)
+      * [Steps](#steps)
+    * [Deploy](#deploy)
 <!-- TOC -->
 
 ## Quickstart
