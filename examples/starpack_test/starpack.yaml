@@ -1,6 +1,7 @@
 package:
   metadata:
-    name: final_test
+    # Set the package name to use later for the deployment
+    name:  &package_name starpack_test
     description: "Testing package"
     version: 0.0.1
     author: Andromeda 360, Inc.
@@ -17,17 +18,8 @@ package:
   steps:
     - name: fastapi # a backend is any given plugin name. Maybe I change it to plugin?
       version: 1.0.0
-    # - type: vulnerability-check
-    #   backend: snyk
-    #   credentials:
-    #   - name: SNYK_TOKEN
-    #     reference: cred_reference_point
-    # - type: validate-model
-    # - type: custom-test
-    #   backend: something_custom
     - name: docker_desktop_push
       labels:
-
       image_name: "irvin-killed-it" # optional, defaults to metadata name
       image_tags: # optional
         - latest
@@ -37,15 +29,12 @@ deployment:
     name: final_test
     version: 1.0.0
   steps:
-  - name: docker_find
+  - name: local_docker_find
     version: 1.0.0
-    match:
-      name: final_test
-      version: 
     image:
-      name: # optional
-      tag: # optional
-  - name: docker_deploy
+      name: *package_name
+      tag: latest
+  - name: local_docker_deploy
     version: 1.0.0
     port: # optional
 

@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/starpack.svg)](https://badge.fury.io/py/starpack)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/starpack)
 [![codecov](https://codecov.io/gh/a360-starpack/starpack/branch/main/graph/badge.svg?token=N077SV8NA8)](https://codecov.io/gh/a360-starpack/starpack)
-
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
 Starpack is tool to package and deploy production-ready packages of maching learning models.

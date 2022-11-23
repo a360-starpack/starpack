@@ -4,7 +4,14 @@ from rich import print
 
 import typer
 
-from starpack import __version__, upload, init, terminate, package_directory, deploy_directory
+from starpack import (
+    __version__,
+    upload,
+    init,
+    terminate,
+    package_directory,
+    deploy_directory,
+)
 
 app = typer.Typer(pretty_exceptions_show_locals=False)
 

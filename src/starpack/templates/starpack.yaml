@@ -36,14 +36,11 @@ deployment:
     name: final_test
     version: 1.0.0
   steps:
-  - name: docker_find
+  - name: local_docker_find
     version: 1.0.0
-    match:
-      name: final_test
-      version: 
     image:
       name: # optional
       tag: # optional
-  - name: docker_deploy
+  - name: local_docker_deploy
     version: 1.0.0
     port: # optional

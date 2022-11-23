@@ -28,11 +28,9 @@ if __name__ == "__main__":
     elif input_type == ".csv":
         input = pd.read_csv(input_path)
 
-
     # Load Pretrained Model
     with open(model_path, "rb") as pretrained_model_file:
         pretrained_model = pickle.load(pretrained_model_file)
-
 
     output = predict(pretrained_model, input)
 

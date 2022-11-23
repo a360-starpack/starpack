@@ -18,9 +18,7 @@ def initialize_project_files(directory: Path):
 
     # Add the full directory path as a parameter for ease of use
     starpack_yaml_mapping = {"directory": directory.name}
-    render_file(
-        template_dir / "package.starpack.yaml", directory, starpack_yaml_mapping
-    )
+    render_file(template_dir / "starpack.yaml", directory, starpack_yaml_mapping)
 
     print(f"Completed initializing project directory: {directory}")
 

@@ -1,6 +1,7 @@
 from starpack.client import StarpackClient
 import pytest
 
+
 @pytest.fixture
 def starpack_client():
     client = StarpackClient()
