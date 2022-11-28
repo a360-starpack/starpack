@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 from rich import print
 
 import typer
@@ -7,13 +6,35 @@ import typer
 from starpack import (
     __version__,
     upload,
-    init,
+    initialize_directory,
+    initialize_engine,
     terminate,
     package_directory,
     deploy_directory,
 )
 
 app = typer.Typer(pretty_exceptions_show_locals=False)
+
+engine_app = typer.Typer(pretty_exceptions_show_locals=False)
+
+app.add_typer(engine_app, name="engine", help="Commands to control and manipulate the Starpack Engine itself.")
+
+
+@engine_app.command(name="start")
+def cmd_start_engine(
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-F",
+        help="Force a removal of all older starpack-engine containers",
+    )
+):
+    """
+    Starts the Starpack Engine. If given a custom Docker image name, will attempt to run it instead.
+    If `force` is passed, will remove any existing containers and ensure that the latest version is pulled.
+    """
+
+    initialize_engine(force=force)
 
 
 def version_callback(give_version: bool) -> None:
@@ -51,25 +72,20 @@ def cmd_upload(directory: Path) -> None:
 
 @app.command(name="init")
 def cmd_init(
-    directory: Optional[Path] = typer.Argument(None),
-    force: bool = typer.Option(
-        False,
-        "--force",
-        "-F",
-        help="Force a removal of all older starpack-engine containers",
-    ),
+    directory: Path,
 ) -> None:
     """
-    Starts the starpack-engine container locally and furthermore initializes
-    the given directory if given with starter code, an example
+    Initializes the given directory with starter code, an example
     requirements.txt, and an example starpack.yaml
     """
 
-    init(directory=directory, force=force)
+    initialize_directory(
+        directory=directory,
+    )
 
 
-@app.command(name="terminate")
-def cmd_terminate(
+@engine_app.command(name="terminate")
+def cmd_engine_terminate(
     all_resources: bool = typer.Option(
         False, "--all", "-A", help="Remove associated volumes and saved data as well."
     )
@@ -84,7 +100,8 @@ def cmd_terminate(
 @app.command(name="package")
 def cmd_package(package_path: Path) -> None:
     """
-    Given a directory, uploads the contents and passes through the contained `starpack.yaml`; given a file, passes as a payload as the `yaml` file.
+    Given a directory, uploads the contents and passes through the contained `starpack.yaml`; given a file, passes as a
+    payload as the `yaml` file.
     """
     package_directory(package_path)
 

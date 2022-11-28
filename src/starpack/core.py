@@ -23,22 +23,25 @@ def upload(directory: Path, client: Optional[StarpackClient] = None) -> None:
     client.upload_artifacts(directory=directory)
 
 
-def init(directory: Optional[Path] = None, force: bool = True) -> StarpackClient:
+def initialize_directory(directory: Path) -> None:
     """
     Starts the starpack-engine container locally and furthermore initializes
     the given directory if given with starter code, an example
     requirements.txt, and an example starpack.yaml
     """
-
-    StarpackClient(start=True, docker=True, force=force)
-
-    # Create the directory if given
     if directory:
         directory = directory.resolve()
         directory.mkdir(parents=True, exist_ok=True)
         initialize.initialize_project_files(directory)
 
-    return StarpackClient
+
+def initialize_engine(force: bool = True) -> StarpackClient:
+    """
+    Starts the Starpack Engine. If given an image name, will initialize that image. If given
+    """
+    client = StarpackClient(start=True, docker=True, force=force)
+
+    return client
 
 
 def terminate(

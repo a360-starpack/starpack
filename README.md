@@ -65,7 +65,7 @@ from pathlib import Path
 
 desired_directory = Path("./path/you/want")
 
-starpack.init(desired_directory)
+starpack.initialize_directory(desired_directory)
 
 # Reconfigure your files that have been initialized for your specific project
 
