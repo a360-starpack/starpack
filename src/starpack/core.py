@@ -1,7 +1,5 @@
 from pathlib import Path
 from typing import Optional
-from yaml import load, Loader
-
 
 from starpack import initialize, __version__, utils
 from starpack.client import StarpackClient
@@ -12,10 +10,6 @@ def upload(directory: Path, client: Optional[StarpackClient] = None) -> None:
     """
     Uploads the contents of a local directory to the Starpack Engine
     """
-    try:
-        directory = Path(directory)
-    except:
-        return
 
     if not client:
         client = StarpackClient(start=True, docker=True)
@@ -121,5 +115,3 @@ def deploy_directory(directory: Path, client: Optional[StarpackClient] = None) -
 
     package_directory(directory, client=client)
     deploy(yaml_file, client=client)
-
-    return yaml_file

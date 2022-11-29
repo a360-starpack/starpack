@@ -10,13 +10,6 @@ def test_docker_not_found_error() -> None:
     assert e.value.exit_code == 1
 
 
-def test_docker_not_found_error() -> None:
-    with pytest.raises(errors.DockerNotFoundError) as e:
-        raise errors.DockerNotFoundError()
-
-    assert e.value.exit_code == 1
-
-
 def test_local_only_error() -> None:
     with pytest.raises(errors.LocalOnlyError) as e:
         raise errors.LocalOnlyError()
