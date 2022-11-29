@@ -17,7 +17,7 @@ def upload(directory: Path, client: Optional[StarpackClient] = None) -> None:
     client.upload_artifacts(directory=directory)
 
 
-def initialize_directory(directory: Path) -> None:
+def initialize_directory(directory: Path, overwrite: bool = False) -> None:
     """
     Starts the starpack-engine container locally and furthermore initializes
     the given directory if given with starter code, an example
@@ -26,7 +26,7 @@ def initialize_directory(directory: Path) -> None:
     if directory:
         directory = directory.resolve()
         directory.mkdir(parents=True, exist_ok=True)
-        initialize.initialize_project_files(directory)
+        initialize.initialize_project_files(directory, overwrite=overwrite)
 
 
 def initialize_engine(force: bool = True) -> StarpackClient:

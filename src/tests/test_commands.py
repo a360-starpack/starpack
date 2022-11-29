@@ -80,6 +80,15 @@ def test_command_init(tmp_path: Path, test_runner: CliRunner):
     assert "Completed initializing project directory:" in result.stdout
 
 
+def test_command_init_overwrite(tmp_path: Path, test_runner: CliRunner):
+    """Tests `starpack init $PATH` with duplicate files"""
+    _ = test_runner.invoke(app, ["init", str(tmp_path)])
+    result = test_runner.invoke(app, ["init", str(tmp_path)], "y\nn\ny\n")
+    assert result.exit_code == 0
+    assert "Completed initializing project directory:" in result.stdout
+    assert "predict.py already exists" in result.stdout
+
+
 def test_command_version(test_runner: CliRunner):
     result = test_runner.invoke(app, ["--version"])
     assert result.exit_code == 0
@@ -92,7 +101,8 @@ def test_command_engine_start(test_runner: CliRunner):
 
 
 def test_command_upload(tmp_path: Path, test_runner: CliRunner):
-    ...
+    result = test_runner.invoke(app, ["upload", str(tmp_path)])
+    assert result.exit_code == 0
 
 
 def test_command_terminate(test_runner: CliRunner):

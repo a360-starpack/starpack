@@ -26,3 +26,7 @@ class PathExistsError(Exit):
     def __init__(self, path: Path) -> None:
         print(f"The path given ({path}) does not exist. Please check and try again.")
         super().__init__(1)
+
+
+class UserDeclined(Exception):
+    ...

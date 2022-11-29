@@ -77,6 +77,9 @@ def cmd_upload(directory: Path) -> None:
 @app.command(name="init")
 def cmd_init(
     directory: Path,
+    overwrite: bool = typer.Option(
+        False, "--overwrite", "-o", help="Overwrite files without further user input"
+    ),
 ) -> None:
     """
     Initializes the given directory with starter code, an example
@@ -85,6 +88,7 @@ def cmd_init(
 
     initialize_directory(
         directory=directory,
+        overwrite=overwrite,
     )
 
 
