@@ -23,7 +23,6 @@ class FakeContainer:
     def remove(*args, **kwargs):
         ...
 
-
     def put_archive(*args, **kwargs):
         ...
 
@@ -34,7 +33,6 @@ class FakeContainerModule:
 
     def run(*args, **kwargs):
         pass
-
 
 
 class FakeImageModule:
@@ -160,10 +158,10 @@ def test_command_package(test_runner: CliRunner, tmp_path, monkeypatch, requests
 
     assert result.exit_code == 0
 
+
 def test_command_deploy(test_runner: CliRunner, tmp_path, monkeypatch, requests_mock):
     requests_mock.post("http://localhost:1976/deploy", status_code=200, text="")
     requests_mock.post("http://localhost:1976/package", status_code=200, text="")
-
 
     yaml_path = tmp_path / "starpack.yaml"
     yaml_path.write_text(fake_payload)

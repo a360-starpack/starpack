@@ -17,7 +17,11 @@ app = typer.Typer(pretty_exceptions_show_locals=False)
 
 engine_app = typer.Typer(pretty_exceptions_show_locals=False)
 
-app.add_typer(engine_app, name="engine", help="Commands to control and manipulate the Starpack Engine itself.")
+app.add_typer(
+    engine_app,
+    name="engine",
+    help="Commands to control and manipulate the Starpack Engine itself.",
+)
 
 
 @engine_app.command(name="start")
