@@ -6,7 +6,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
-Starpack is tool to package and deploy production-ready packages of maching learning models.
+Starpack is tool to package and deploy production-ready packages of machine learning models.
 
 This repository contains the code for the CLI and Python library for interacting with Starpack. To run Starpack locally, 
 you will need to install a Python version listed in the badge above and 
@@ -94,8 +94,8 @@ Additionally, we have a variety of commands to manage the Starpack Engine and ge
 
 ### Init
 
-The command, `starpack init`,  can be used to start up the Starpack Engine container in your local docker environment. 
-Additionally, when provided with a local path as an argument, the Starpack Engine will generate files to help you start developing your package definition.
+The command, `starpack init`, when provided with a local path as an argument, will generate files to help you start developing your package definition. By default, Starpack will prompt for permission to overwrite existing files, unless the `--ovewrite/-o` flag is given.
+
 
 | Filename           | Usage                                                                                                                                                                                                                    |
 |--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -103,15 +103,6 @@ Additionally, when provided with a local path as an argument, the Starpack Engin
 | `predict.py`       | Python script that defines how to handle an ingested Pandas DataFrame of data and transform it into your prediction output. This script should handle any data transformations and model loading required for inference. |
 | `starpack.yaml`    | YAML definition of your Starpack packaging and deployment information. This file should define the locations of all necessary artifacts and build steps.                                                                 |
 
-The `starpack.yaml` file contains two main sections, `package` and `deployment`
-
-Finally, if you pass the `--force` or `-F` flags, you will force the deletion of any existing Starpack Engines and create a new Docker container for the Engine.
-
-
-### Terminate
-
-The command, `starpack terminate`, is used to spin down any existing Starpack Engines running on your local machine. 
-Additionally, the `--all` or `-A` flag can be passed to additionally delete any existing Docker Volumes and associated data from your machine.
 
 ### Upload
 
@@ -124,7 +115,9 @@ The command, `starpack package`, takes in a path, either a directory or `starpac
 If given a directory, Starpack will upload the contents to the Starpack Engine, then find any `starpack.yaml` file in 
 the given directory to send as a payload to the Starpack Engine.
 
-The YAML packging section contains three main subsections:
+
+The `starpack.yaml` file contains two main sections, `package` and `deployment`. 
+Furthermore, the YAML packaging section contains three main subsections:
 
 1. Metadata
 2. Artifacts
@@ -149,5 +142,21 @@ Some plugins may need additional data, which will be included within the step's 
 
 The command, `starpack deploy`, takes in a path, either a directory or `starpack.yaml` in order to deploy your packaged model.
 If given a path, the assumption is made that the contents should be uploaded to the Engine, the YAML should be parsed for any packaging information, and finally, the deployment should be processed.
-If given just a starpack.yaml, only the deploy step will be run, with the assumption that the other steps have already been run previously.
+If given just a starpack.yaml, only the `deployment` step will be run, with the assumption that the other steps have already been run previously.
+
+
+### Engine
+
+There are several 
+
+#### Start
+
+The command, `starpack engine start`, is used to ensure the Starpack Engine is running or force the creation of a new container.
+
+Finally, if you pass the `--force` or `-F` flags, you will force the deletion of any existing Starpack Engines and create a new Docker container for the Engine.
+
+#### Terminate
+
+The command, `starpack engine terminate`, is used to spin down any existing Starpack Engines running on your local machine. 
+Additionally, the `--all` or `-A` flag can be passed to additionally delete any existing Docker Volumes and associated data from your machine.
 
