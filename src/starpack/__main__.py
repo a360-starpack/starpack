@@ -78,7 +78,7 @@ def main(
 
 
 @app.command(name="upload")
-def cmd_upload(directory: Path = Path(".")) -> None:
+def cmd_upload(directory: Path = typer.Argument(Path("."))) -> None:
     """
     Command to upload the contents of a local directory to the Starpack Engine
 
@@ -89,7 +89,7 @@ def cmd_upload(directory: Path = Path(".")) -> None:
 
 @app.command(name="init")
 def cmd_init(
-    directory: Path = Path("."),
+    directory: Path = typer.Argument(Path(".")),
     overwrite: bool = typer.Option(
         False, "--overwrite", "-o", help="Overwrite files without further user input"
     ),
@@ -106,7 +106,7 @@ def cmd_init(
 
 
 @app.command(name="package")
-def cmd_package(package_path: Path = Path(".")) -> None:
+def cmd_package(package_path: Path = typer.Argument(Path("."))) -> None:
     """
     Given a directory, uploads the contents and passes through the contained `starpack.yaml`; given a file, passes as a
     payload as the `yaml` file.
@@ -115,11 +115,11 @@ def cmd_package(package_path: Path = Path(".")) -> None:
 
 
 @app.command(name="deploy")
-def cmd_deploy(package_path: Path = Path(".")) -> None:
+def cmd_deploy(deploy_path: Path = typer.Argument(Path("."))) -> None:
     """
     Given a starpack.yaml, deploys a Starpack Package into the environment designated within.
     """
-    deploy_directory(package_path)
+    deploy_directory(deploy_path)
 
 
 if __name__ == "__main__":
