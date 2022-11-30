@@ -41,6 +41,19 @@ def cmd_start_engine(
     initialize_engine(force=force)
 
 
+@engine_app.command(name="terminate")
+def cmd_engine_terminate(
+    all_resources: bool = typer.Option(
+        False, "--all", "-A", help="Remove associated volumes and saved data as well."
+    )
+) -> None:
+    """
+    Terminates and removes the Starpack Engine container and optionally removes all associated data.
+    """
+
+    terminate(all_resources=all_resources)
+
+
 def version_callback(give_version: bool) -> None:
     """
     Returns the current version of Starpack
@@ -65,7 +78,7 @@ def main(
 
 
 @app.command(name="upload")
-def cmd_upload(directory: Path) -> None:
+def cmd_upload(directory: Path = Path(".")) -> None:
     """
     Command to upload the contents of a local directory to the Starpack Engine
 
@@ -76,7 +89,7 @@ def cmd_upload(directory: Path) -> None:
 
 @app.command(name="init")
 def cmd_init(
-    directory: Path,
+    directory: Path = Path("."),
     overwrite: bool = typer.Option(
         False, "--overwrite", "-o", help="Overwrite files without further user input"
     ),
@@ -92,21 +105,8 @@ def cmd_init(
     )
 
 
-@engine_app.command(name="terminate")
-def cmd_engine_terminate(
-    all_resources: bool = typer.Option(
-        False, "--all", "-A", help="Remove associated volumes and saved data as well."
-    )
-) -> None:
-    """
-    Terminates and removes the Starpack Engine container and optionally removes all associated data.
-    """
-
-    terminate(all_resources=all_resources)
-
-
 @app.command(name="package")
-def cmd_package(package_path: Path) -> None:
+def cmd_package(package_path: Path = Path(".")) -> None:
     """
     Given a directory, uploads the contents and passes through the contained `starpack.yaml`; given a file, passes as a
     payload as the `yaml` file.
@@ -115,7 +115,7 @@ def cmd_package(package_path: Path) -> None:
 
 
 @app.command(name="deploy")
-def cmd_deploy(package_path: Path) -> None:
+def cmd_deploy(package_path: Path = Path(".")) -> None:
     """
     Given a starpack.yaml, deploys a Starpack Package into the environment designated within.
     """
