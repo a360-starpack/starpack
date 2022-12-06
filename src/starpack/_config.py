@@ -17,6 +17,7 @@ ENV_FILE.touch()
 class Settings(BaseSettings):
     engine_port: int = 1976
     engine_image: str = "starpack/starpack-engine:latest"
+    pull_image: bool = True
     app_name: str = APP_NAME
     app_dir: Path = APP_DIR
     plugins_dir: Optional[Path] = None

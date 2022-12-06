@@ -39,14 +39,14 @@ def test_client_healthcheck(
 
 @pytest.mark.parametrize(
     ("status_code", "output"),
-    [(200, "Successfully deployed"), (500, "500"), (300, "300")],
+    [(200, "http://localhost:2000"), (500, "500"), (300, "300")],
 )
 def test_client_deploy(
     starpack_client, requests_mock, capsys, status_code: int, output: str
 ):
     url = "http://localhost:1976/deploy"
     payload = {"deployment": {"metadata": {"name": "test"}}}
-    requests_mock.post(url, status_code=status_code, text="")
+    requests_mock.post(url, status_code=status_code, json={"endpoint": "http://localhost:2000"})
     starpack_client.deploy(payload)
     print_out = capsys.readouterr().out
 

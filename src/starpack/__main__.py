@@ -1,5 +1,6 @@
 from pathlib import Path
 from rich import print
+from rich.pretty import pprint
 
 import typer
 
@@ -12,6 +13,7 @@ from starpack import (
     package_directory,
     deploy_directory,
 )
+from starpack._config import settings
 
 app = typer.Typer(pretty_exceptions_show_locals=False)
 
@@ -22,6 +24,25 @@ app.add_typer(
     name="engine",
     help="Commands to control and manipulate the Starpack Engine itself.",
 )
+
+# Config app for changing config
+
+config_app = typer.Typer(pretty_exceptions_show_locals=False)
+
+app.add_typer(
+    config_app,
+    name="config",
+    help="View the current Starpack Configuration. You can edit this configuration manually at ~/.starpack/",
+    hidden=True
+)
+
+
+@config_app.command(name="view")
+def cmd_view_config():
+    """
+    View a pretty-printed version of the config, found
+    """
+    pprint(settings, expand_all=True)
 
 
 @engine_app.command(name="start")

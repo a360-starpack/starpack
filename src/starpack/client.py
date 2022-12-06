@@ -72,7 +72,10 @@ class StarpackClient:
         output = requests.post(deploy_url, json=payload)
 
         if output.status_code / 100 == 2:
-            print(f"Successfully deployed {payload['deployment']['metadata']['name']}")
+            endpoint = output.json().get("endpoint")
+            if not endpoint:
+                endpoint = "unknown location. Please check Docker to find your running container."
+            print(f"Successfully deployed {payload['deployment']['metadata']['name']} at {endpoint}")
         else:
             print(output.status_code)
             print(output.text)
@@ -128,7 +131,8 @@ class StarpackClient:
         self.docker_client.volumes.create(
             name=self.volumes["artifacts"]["host"], labels={"app": self.app_label}
         )
-        self.docker_client.images.pull(settings.engine_image)
+        if settings.pull_image:
+            self.docker_client.images.pull(settings.engine_image)
 
         print(f"Starting Starpack Engine at {self.url}")
         self.engine = self.docker_client.containers.run(
