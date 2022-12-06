@@ -32,6 +32,7 @@ It is currently on our roadmap to support deployment through Andromeda 360 down 
       * [Artifacts](#artifacts)
       * [Steps](#steps)
     * [Deploy](#deploy)
+  * [Troubleshooting](#troubleshooting)
 <!-- TOC -->
 
 ## Quickstart
@@ -160,3 +161,12 @@ Finally, if you pass the `--force` or `-F` flags, you will force the deletion of
 The command, `starpack engine terminate`, is used to spin down any existing Starpack Engines running on your local machine. 
 Additionally, the `--all` or `-A` flag can be passed to additionally delete any existing Docker Volumes and associated data from your machine.
 
+
+## Troubleshooting
+
+Before troubleshooting any issues, please run the two following commands in your terminal to ensure that you're running the latest version of both the Starpack CLI and Starpack Engine:
+
+```
+pip install starpack --upgrade
+starpack engine start --force
+```
