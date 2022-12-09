@@ -15,7 +15,6 @@ from starpack.errors import *
 
 
 class StarpackClient:
-
     volumes: Dict[str, Dict[str, str]] = {
         "artifacts": {
             "host": "starpack-model-artifacts",
@@ -72,10 +71,19 @@ class StarpackClient:
         output = requests.post(deploy_url, json=payload)
 
         if output.status_code / 100 == 2:
-            endpoint = output.json().get("endpoint")
-            if not endpoint:
-                endpoint = "unknown location. Please check Docker to find your running container."
-            print(f"Successfully deployed {payload['deployment']['metadata']['name']} at {endpoint}")
+            endpoints = output.json().get("endpoints")
+            deployment_name = payload["deployment"]["metadata"]["name"]
+            if not endpoints:
+                print(
+                    f"Deployed {deployment_name} at an unknown location. "
+                    f"Please check Docker to find your running container."
+                )
+            else:
+                for wrapper, url in endpoints.items():
+                    print(
+                        f"Deployed {deployment_name} using wrapper {wrapper} at {url}."
+                    )
+
         else:
             print(output.status_code)
             print(output.text)

@@ -33,7 +33,7 @@ app.add_typer(
     config_app,
     name="config",
     help="View the current Starpack Configuration. You can edit this configuration manually at ~/.starpack/",
-    hidden=True
+    hidden=True,
 )
 
 
