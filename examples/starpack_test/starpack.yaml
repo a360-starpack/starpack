@@ -9,7 +9,7 @@ package:
   artifacts:
     root_location: starpack_test
     streamlit: streamlit_example.py
-    validation_data:
+    validation_data: heart_disease_score.csv
     training_data:
     inference:
       function_name: predict
