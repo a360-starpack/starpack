@@ -179,7 +179,6 @@ The following plugins are available to use in either packaging or deployment:
 | fastapi              | Packages a set of model   artifacts with a FastAPI wrapper.                              |                                                          |
 | streamlit            | Packages a set of model   artifacts with a Streamlit wrapper.                            |                                                          |
 
-
 ## Examples
 
 ### Basic Example
