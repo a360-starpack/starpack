@@ -25,13 +25,18 @@ It is currently on our roadmap to support deployment through Andromeda 360 down 
   * [Quickstart](#quickstart)
   * [Full Command List](#full-command-list)
     * [Init](#init)
-    * [Terminate](#terminate)
     * [Upload](#upload)
     * [Package](#package)
       * [Metadata](#metadata)
       * [Artifacts](#artifacts)
       * [Steps](#steps)
     * [Deploy](#deploy)
+    * [Engine](#engine)
+      * [Start](#start)
+      * [Terminate](#terminate)
+    * [Plugins](#plugins)
+  * [Examples](#examples)
+    * [Basic Example](#basic-example)
   * [Troubleshooting](#troubleshooting)
 <!-- TOC -->
 
@@ -124,6 +129,7 @@ Furthermore, the YAML packaging section contains three main subsections:
 2. Artifacts
 3. Steps
 
+
 #### Metadata
 
 Within the metadata section, you can define things such as the name, version, and author of the package. 
@@ -160,6 +166,25 @@ Finally, if you pass the `--force` or `-F` flags, you will force the deletion of
 
 The command, `starpack engine terminate`, is used to spin down any existing Starpack Engines running on your local machine. 
 Additionally, the `--all` or `-A` flag can be passed to additionally delete any existing Docker Volumes and associated data from your machine.
+
+### Plugins
+
+The following plugins are available to use in either packaging or deployment:
+
+| Name                 | Description                                                                              | Arguments                                                |
+|----------------------|------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| docker_desktop_push  | Tags an image and stores it in   the local Docker repository                             | `image_name`, `image_tags` (list), `wrapper`             |
+| local_docker_deploy  | Deploys a packaged Starpack   model with a given wrapper to the local Docker environment | `port`, `wrapper` (list) with `name` and `port` for each |
+| local_docker_find    | Finds already packaged model   artifacts in the local Docker environment                 | `wrapper`, `image` with `name` and `tag` sub-arguments   |
+| fastapi              | Packages a set of model   artifacts with a FastAPI wrapper.                              |                                                          |
+| streamlit            | Packages a set of model   artifacts with a Streamlit wrapper.                            |                                                          |
+
+
+## Examples
+
+### Basic Example
+
+Under `examples/starpack_basic_example`, you can find a Jupyter notebook and associated files for deploying a Starpack package using both Streamlit and FastAPI. By following along with the notebook, then running `starpack deploy examples/starpack_basic_example` from the root of this repository, you will be able to see how one exports, defines, packages, and deploys a Starpack model.
 
 
 ## Troubleshooting
