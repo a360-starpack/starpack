@@ -46,7 +46,9 @@ def test_client_deploy(
     url = "http://localhost:1976/deploy"
     payload = {"deployment": {"metadata": {"name": "test"}}}
     requests_mock.post(
-        url, status_code=status_code, json={"endpoints": {"fastapi": "http://localhost:2000"}}
+        url,
+        status_code=status_code,
+        json={"endpoints": {"fastapi": "http://localhost:2000"}},
     )
     starpack_client.deploy(payload)
     print_out = capsys.readouterr().out
