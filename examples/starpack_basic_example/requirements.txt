@@ -2,6 +2,8 @@
 
 pandas
 numpy
+requests
+gradio
 
 # Any of the data in this file can be deleted or changed and you can add your own requirements, optionally with version constraints, as shown below:
 

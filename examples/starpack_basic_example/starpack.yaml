@@ -1,27 +1,29 @@
 package:
   metadata:
     # Set the package name to use later for the deployment
-    name:  &package_name starpack_test_package
+    name:  &package_name starpack_deployment
     description: "Testing package"
     version: 0.0.1
     author: Andromeda 360, Inc.
     author_email: irvin.shen@andromeda360.com
   artifacts:
-    root_location: starpack_test
+    root_location: starpack_basic_example
     streamlit: streamlit_example.py
     validation_data: heart_disease_score.csv
     training_data:
+    gradio_script_name: gradio_example
+    gradio_interface_name: gradio_app
     inference:
       function_name: predict
       script_name: predict.py
       model_data: pred_heart_disease.joblib
     dependencies: requirements.txt
   steps:
+    - name: gradio_middleware
     # Build FastAPI portion of package
     - name: fastapi
       version: 1.0.0
     # Separately build a streamlit version of the package
-    - name: streamlit
 
 deployment:
   metadata:
@@ -32,9 +34,6 @@ deployment:
   - name: local_docker_find
     version: 1.0.0
     wrapper: fastapi
-  - name: local_docker_find
-    version: 1.0.0
-    wrapper: streamlit
     # Deploy the images
   - name: local_docker_deploy
     version: 1.0.0
@@ -42,6 +41,4 @@ deployment:
     wrapper:
       - name: fastapi
         port: 1996
-      - name: streamlit
-        port:
 

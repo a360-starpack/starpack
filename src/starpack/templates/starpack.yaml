@@ -8,6 +8,8 @@ package:
     root_location: $directory
     validation_data:
     training_data:
+    gradio_script_name:
+    gradio_interface_name:
     inference:
       model_data: # List out any models you want imported
       function_name: predict
@@ -16,14 +18,6 @@ package:
   steps:
     - name: fastapi
       version: 1.0.0
-    # - type: vulnerability-check
-    #   backend: snyk
-    #   credentials:
-    #   - name: SNYK_TOKEN
-    #     reference: cred_reference_point
-    # - type: validate-model
-    # - type: custom-test
-    #   backend: something_custom
     - name: docker_desktop_push
       labels: 
       image_name: # optional, defaults to metadata name
