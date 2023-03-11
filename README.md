@@ -171,13 +171,14 @@ Additionally, the `--all` or `-A` flag can be passed to additionally delete any 
 
 The following plugins are available to use in either packaging or deployment:
 
-| Name                 | Description                                                                              | Arguments                                                |
-|----------------------|------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| docker_desktop_push  | Tags an image and stores it in   the local Docker repository                             | `image_name`, `image_tags` (list), `wrapper`             |
-| local_docker_deploy  | Deploys a packaged Starpack   model with a given wrapper to the local Docker environment | `port`, `wrapper` (list) with `name` and `port` for each |
-| local_docker_find    | Finds already packaged model   artifacts in the local Docker environment                 | `wrapper`, `image` with `name` and `tag` sub-arguments   |
-| fastapi              | Packages a set of model   artifacts with a FastAPI wrapper.                              |                                                          |
-| streamlit            | Packages a set of model   artifacts with a Streamlit wrapper.                            |                                                          |
+| Name                | Description                                                                              | Arguments                                                |
+|---------------------|------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| docker_desktop_push | Tags an image and stores it in   the local Docker repository                             | `image_name`, `image_tags` (list), `wrapper`             |
+| local_docker_deploy | Deploys a packaged Starpack   model with a given wrapper to the local Docker environment | `port`, `wrapper` (list) with `name` and `port` for each |
+| local_docker_find   | Finds already packaged model   artifacts in the local Docker environment                 | `wrapper`, `image` with `name` and `tag` sub-arguments   |
+| fastapi             | Packages a set of model   artifacts with a FastAPI wrapper.                              |                                                          |
+| streamlit           | Packages a set of model   artifacts with a Streamlit wrapper.                            |                                                          |
+| gradio              | Adds in Gradio functionality prior to packaging.                                         |                                                          |
 
 ## Examples
 

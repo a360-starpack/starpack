@@ -1,33 +1,28 @@
 from pathlib import Path
 from rich import print
-from rich.pretty import pprint
-
 import typer
 
 from starpack import (
     __version__,
     upload,
     initialize_directory,
-    initialize_engine,
-    terminate,
     package_directory,
     deploy_directory,
 )
-from starpack._config import settings
+from starpack._config import config_app
+from starpack._cmd_engine import engine_app
+from starpack._cmd_packages import package_app
+from starpack._cmd_deployments import deployment_app
 
 app = typer.Typer(pretty_exceptions_show_locals=False)
 
-engine_app = typer.Typer(pretty_exceptions_show_locals=False)
-
+# Engine app for controlling engine information
 app.add_typer(
     engine_app,
     name="engine",
     help="Commands to control and manipulate the Starpack Engine itself.",
 )
 
-# Config app for changing config
-
-config_app = typer.Typer(pretty_exceptions_show_locals=False)
 
 app.add_typer(
     config_app,
@@ -36,43 +31,17 @@ app.add_typer(
     hidden=True,
 )
 
+app.add_typer(
+    package_app,
+    name="package",
+    help="Commands to manipulate packages",
+)
 
-@config_app.command(name="view")
-def cmd_view_config():
-    """
-    View a pretty-printed version of the config, found
-    """
-    pprint(settings, expand_all=True)
-
-
-@engine_app.command(name="start")
-def cmd_start_engine(
-    force: bool = typer.Option(
-        False,
-        "--force",
-        "-F",
-        help="Force a removal of all older starpack-engine containers",
-    )
-):
-    """
-    Starts the Starpack Engine. If given a custom Docker image name, will attempt to run it instead.
-    If `force` is passed, will remove any existing containers and ensure that the latest version is pulled.
-    """
-
-    initialize_engine(force=force)
-
-
-@engine_app.command(name="terminate")
-def cmd_engine_terminate(
-    all_resources: bool = typer.Option(
-        False, "--all", "-A", help="Remove associated volumes and saved data as well."
-    )
-) -> None:
-    """
-    Terminates and removes the Starpack Engine container and optionally removes all associated data.
-    """
-
-    terminate(all_resources=all_resources)
+app.add_typer(
+    deployment_app,
+    name="deployment",
+    help="Commands to manipulate deployments",
+)
 
 
 def version_callback(give_version: bool) -> None:

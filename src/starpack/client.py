@@ -66,7 +66,7 @@ class StarpackClient:
         """
         Deploys a packaged model image or if the image does not exist, attempts to run the packaging in the YAML file
         """
-        deploy_url = f"{self.url}/deploy"
+        deploy_url = f"{self.url}/deployment"
 
         output = requests.post(deploy_url, json=payload)
 
@@ -87,6 +87,114 @@ class StarpackClient:
         else:
             print(output.status_code)
             print(output.text)
+
+    def get_logs(
+        self,
+        deployment_name: str,
+        version: Optional[str] = None,
+        wrapper: Optional[str] = None,
+    ) -> str:
+        """
+        Gets logs for a deployed package with the given
+        """
+        log_url = f"{self.url}/logs"
+
+        payload = {"name": deployment_name, "version": version, "wrapper": wrapper}
+
+        output = requests.get(log_url, params=payload)
+
+        if output.status_code / 100 == 2:
+            return output.text
+        else:
+            print(output.status_code)
+            print(output.text)
+
+    def delete_deployments(
+            self,
+            deployment_name: str,
+            version: Optional[str] = None,
+            wrapper: Optional[str] = None,
+    ) -> None:
+        """
+        Delete matching deployments
+        """
+        deployment_delete_url = f"{self.url}/deployment"
+
+        payload = {"name": deployment_name, "version": version, "wrapper": wrapper}
+
+        output = requests.delete(deployment_delete_url, params=payload)
+
+        if output.status_code / 100 == 2:
+            print("Successfully deleted deployments!")
+        else:
+            print(output.status_code)
+            print(output.text)
+
+    def list_deployments(
+            self,
+            deployment_name: str,
+            version: Optional[str] = None,
+            wrapper: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        List details for all matching deployments
+        """
+        deployment_url = f"{self.url}/deployment"
+        print(deployment_url)
+
+        payload = {"name": deployment_name, "version": version, "wrapper": wrapper}
+
+        output = requests.get(deployment_url, params=payload)
+
+        if output.status_code / 100 == 2:
+            return output.json()
+        else:
+            print(output.status_code)
+            print(output.text)
+
+    def delete_packages(
+            self,
+            package_name: str,
+            version: Optional[str] = None,
+            wrapper: Optional[str] = None,
+    ) -> None:
+        """
+        Delete all matching packages
+        """
+        package_delete_url = f"{self.url}/package"
+
+        payload = {"name": package_name, "version": version, "wrapper": wrapper}
+
+        output = requests.delete(package_delete_url, params=payload)
+
+        if output.status_code / 100 == 2:
+            print("Successfully deleted packages")
+        else:
+            print(output.status_code)
+            print(output.text)
+
+    def list_packages(
+            self,
+            package_name: str,
+            version: Optional[str] = None,
+            wrapper: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        List details for all matching packages
+        """
+        package_url = f"{self.url}/package"
+
+        payload = {"name": package_name, "version": version, "wrapper": wrapper}
+
+        output = requests.get(package_url, params=payload)
+
+        if output.status_code / 100 == 2:
+            return output.json()
+        else:
+            print(output.status_code)
+            print(output.text)
+
+
 
     def package(self, payload: Dict[str, Any]) -> None:
         """

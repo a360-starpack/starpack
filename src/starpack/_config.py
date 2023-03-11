@@ -2,6 +2,7 @@ from pathlib import Path
 import typer
 from pydantic import BaseSettings, root_validator
 from typing import Optional
+from pprint import pprint
 
 # Configuration for the app name
 APP_NAME = "starpack"
@@ -36,3 +37,15 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+# Config app for changing config
+config_app = typer.Typer(pretty_exceptions_show_locals=False)
+
+
+@config_app.command(name="view")
+def cmd_view_config():
+    """
+    View a pretty-printed version of the config, found
+    """
+    pprint(settings, expand_all=True)

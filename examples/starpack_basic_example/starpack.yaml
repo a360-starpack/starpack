@@ -1,7 +1,7 @@
 package:
   metadata:
     # Set the package name to use later for the deployment
-    name:  &package_name starpack_deployment
+    name:  &package_name gradio_starpack_package
     description: "Testing package"
     version: 0.0.1
     author: Andromeda 360, Inc.
@@ -27,7 +27,7 @@ package:
 
 deployment:
   metadata:
-    name: starpack_test_deployment
+    name: gradio_starpack_deployment
     version: 1.0.0
   steps:
     # Find each image

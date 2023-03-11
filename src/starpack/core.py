@@ -6,13 +6,12 @@ from starpack.client import StarpackClient
 from starpack.errors import *
 
 
-def upload(directory: Path, client: Optional[StarpackClient] = None) -> None:
+def upload(
+    directory: Path, client: Optional[StarpackClient] = None
+) -> None:
     """
     Uploads the contents of a local directory to the Starpack Engine
     """
-
-    if not client:
-        client = StarpackClient(start=True, docker=True)
 
     client.upload_artifacts(directory=directory)
 
@@ -39,7 +38,7 @@ def initialize_engine(force: bool = True) -> StarpackClient:
 
 
 def terminate(
-    all_resources: bool = False, client: Optional[StarpackClient] = None
+    all_resources: bool = False, client: StarpackClient = StarpackClient()
 ) -> None:
     """
     Terminates and removes the Starpack Engine container and optionally removes all associated data
@@ -51,7 +50,9 @@ def terminate(
     client.terminate(all_resources)
 
 
-def package(yaml_path: Path, client: Optional[StarpackClient] = None) -> None:
+def package(
+    yaml_path: Path, client: Optional[StarpackClient] = None
+) -> None:
     """
     Takes a YAML file or directory to start the packaging process into a Docker image
     """
@@ -66,9 +67,11 @@ def package(yaml_path: Path, client: Optional[StarpackClient] = None) -> None:
     client.package(input_dict)
 
 
-def package_directory(directory: Path, client: Optional[StarpackClient] = None) -> None:
+def package_directory(
+    directory: Path, client: Optional[StarpackClient] = None
+) -> None:
     """
-    Given a directory, uploads the contents, finds the "starpack.yaml", and converts into into a JSON payload for the Starpack Engine to run packaging
+    Given a directory, uploads the contents, finds the "starpack.yaml", and converts into a JSON payload for the Starpack Engine to run packaging
     """
     if not directory.is_dir():
         return package(directory)
@@ -85,7 +88,9 @@ def package_directory(directory: Path, client: Optional[StarpackClient] = None) 
     package(yaml_file, client=client)
 
 
-def deploy(yaml_path: Path, client: Optional[StarpackClient] = None) -> None:
+def deploy(
+    yaml_path: Path, client: Optional[StarpackClient] = None,
+) -> None:
     """
     Takes a YAML file or directory to start the deployment process. If no package exists, also packages the given Starpack artifacts if present in the YAML file.
     """
@@ -98,7 +103,9 @@ def deploy(yaml_path: Path, client: Optional[StarpackClient] = None) -> None:
     client.deploy(input_dict)
 
 
-def deploy_directory(directory: Path, client: Optional[StarpackClient] = None) -> None:
+def deploy_directory(
+    directory: Path, client: Optional[StarpackClient] = None
+) -> None:
     """
     Given a directory, uploads the contents, packages, and runs deployment.
     """
@@ -115,3 +122,86 @@ def deploy_directory(directory: Path, client: Optional[StarpackClient] = None) -
 
     package_directory(directory, client=client)
     deploy(yaml_file, client=client)
+
+
+def list_deployments(
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    wrapper: Optional[str] = None,
+    client: Optional[StarpackClient] = None,
+) -> None:
+    """
+    Lists deployments matching the combination of name (required), version (optional), and wrapper (optional).
+    """
+    if not client:
+        client = StarpackClient(start=True, docker=True)
+
+    print(client.list_deployments(name, version, wrapper))
+
+
+def list_packages(
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    wrapper: Optional[str] = None,
+    client: Optional[StarpackClient] = None,
+) -> None:
+    """
+    Lists deployments matching the combination of name (required), version (optional), and wrapper (optional).
+    """
+    if not client:
+        client = StarpackClient(start=True, docker=True)
+
+    print(client.list_packages(name, version, wrapper))
+
+
+def delete_deployments(
+    name: str,
+    version: Optional[str] = None,
+    wrapper: Optional[str] = None,
+    client: Optional[StarpackClient] = None,
+) -> None:
+    """
+    Deletes deployments matching the combination of name (required), version (optional), and wrapper (optional).
+    """
+    if not client:
+        client = StarpackClient(start=True, docker=True)
+
+    client.delete_deployments(name, version, wrapper)
+
+
+def delete_packages(
+    name: str,
+    version: Optional[str] = None,
+    wrapper: Optional[str] = None,
+    client: Optional[StarpackClient] = None,
+) -> None:
+    """
+    Deletes packages matching the combination of name (required), version (optional), and wrapper (optional).
+    """
+    if not client:
+        client = StarpackClient(start=True, docker=True)
+
+    client.delete_packages(name, version, wrapper)
+
+
+def logs(
+    name: str,
+    version: Optional[str] = None,
+    wrapper: Optional[str] = None,
+    output: Optional[Path] = None,
+    client: Optional[StarpackClient] = None,
+) -> None:
+    """
+    Deletes deployments matching the combination of name (required), version (optional), and wrapper (optional).
+    """
+    if not client:
+        client = StarpackClient(start=True, docker=True)
+
+    log_text = client.get_logs(name, version, wrapper)
+
+    if output:
+        output.write_text(log_text)
+        print(f"Wrote logs to {output.resolve()}")
+    else:
+        print(output)
+
