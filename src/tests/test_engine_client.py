@@ -43,7 +43,7 @@ def test_client_healthcheck(
 def test_client_deploy(
     starpack_client, requests_mock, capsys, status_code: int, output: str
 ):
-    url = "http://localhost:1976/deploy"
+    url = "http://localhost:1976/deployment"
     payload = {"deployment": {"metadata": {"name": "test"}}}
     requests_mock.post(
         url,

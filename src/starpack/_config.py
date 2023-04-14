@@ -2,7 +2,7 @@ from pathlib import Path
 import typer
 from pydantic import BaseSettings, root_validator
 from typing import Optional
-from pprint import pprint
+from rich import print_json
 
 # Configuration for the app name
 APP_NAME = "starpack"
@@ -48,4 +48,4 @@ def cmd_view_config():
     """
     View a pretty-printed version of the config, found
     """
-    pprint(settings, expand_all=True)
+    print_json(settings.json())

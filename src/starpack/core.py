@@ -12,6 +12,8 @@ def upload(
     """
     Uploads the contents of a local directory to the Starpack Engine
     """
+    if not client:
+        client = StarpackClient(start=True, docker=True)
 
     client.upload_artifacts(directory=directory)
 
@@ -45,7 +47,7 @@ def terminate(
     """
 
     if not client:
-        client = StarpackClient()
+        client = StarpackClient(start=True, docker=True)
 
     client.terminate(all_resources)
 

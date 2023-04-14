@@ -164,7 +164,7 @@ def test_command_package(test_runner: CliRunner, tmp_path, monkeypatch, requests
     yaml_path.write_text(fake_payload)
 
     monkeypatch.setattr(StarpackClient, "package", lambda x, y: ...)
-    result = test_runner.invoke(app, ["package", str(tmp_path)])
+    result = test_runner.invoke(app, ["package", "create", str(tmp_path)])
 
     assert result.exit_code == 0
 
